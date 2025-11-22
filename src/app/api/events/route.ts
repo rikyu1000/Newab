@@ -3,6 +3,8 @@ import { google } from "googleapis";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const refreshToken = cookies().get("google_refresh_token")?.value;
 
