@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Timeline from "./Timeline";
 import CalendarAuth from "./CalendarAuth";
+import NextEvent from "./NextEvent";
 
 export default function Calendar() {
   const [token, setToken] = useState<string | null>(null);
@@ -71,8 +72,11 @@ export default function Calendar() {
   }
 
   return (
-    <div className="w-full h-32 mt-auto">
-      <Timeline events={events} />
+    <div className="w-full flex flex-col mt-auto">
+      <NextEvent events={events} />
+      <div className="w-full h-32">
+        <Timeline events={events} />
+      </div>
     </div>
   );
 }
