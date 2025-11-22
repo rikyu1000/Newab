@@ -71,7 +71,7 @@ export default function Calendar() {
   }
 
   return (
-    <div className="w-full h-48 mt-auto">
+    <div className="w-full h-32 mt-auto">
       <Timeline events={events} />
     </div>
   );
