@@ -26,10 +26,13 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.redirect(new URL("/", request.url));
-  } catch (error) {
+  } catch (error: any) {
     console.error("Auth error:", error);
     return NextResponse.json(
-      { error: "Authentication failed" },
+      {
+        error: "Authentication failed",
+        details: error.message || JSON.stringify(error),
+      },
       { status: 500 }
     );
   }
