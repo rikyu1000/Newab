@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
 
   if (!code) {
-    return NextResponse.json({ error: "No code provided" }, { status: 400 });
+    return NextResponse.json({ error: "No code provided v3" }, { status: 400 });
   }
 
   try {
