@@ -31,8 +31,8 @@ export default function Timeline({ events }: TimelineProps) {
 
   const currentPosition = getDayPercentage(currentTime);
 
-  // Generate hour markers (every 2 hours)
-  const hourMarkers = Array.from({ length: 13 }, (_, i) => i * 2);
+  // Generate hour markers (every 1 hour)
+  const hourMarkers = Array.from({ length: 25 }, (_, i) => i);
 
   return (
     <div className="w-full h-full relative bg-zinc-900/40 backdrop-blur-md border-t border-zinc-800/50">
