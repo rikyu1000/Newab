@@ -1,6 +1,4 @@
-import DigitalClock from "@/components/DigitalClock";
-import Greeting from "@/components/Greeting";
-import Calendar from "@/components/Calendar";
+import QuickLinks from "@/components/QuickLinks";
 
 export default function Page() {
   return (
@@ -8,6 +6,7 @@ export default function Page() {
       <div className="flex-1 flex flex-col items-center justify-center gap-8 w-full">
         <DigitalClock />
         <Greeting />
+        <QuickLinks />
       </div>
       <Calendar />
     </main>
