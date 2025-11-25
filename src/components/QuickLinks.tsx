@@ -23,63 +23,49 @@ export default function QuickLinks() {
   const [links, setLinks] = useState<LinkItem[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [newTitle, setNewTitle] = useState("");
-  const [newUrl, setNewUrl] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("quick_links");
-    if (saved) {
-      setLinks(JSON.parse(saved));
-    } else {
-      setLinks(DEFAULT_LINKS);
-    }
-  }, []);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in input
+      if (
+        document.activeElement?.tagName === "INPUT" ||
+        document.activeElement?.tagName === "TEXTAREA"
+      ) {
+        return;
+      }
 
-  const saveLinks = (newLinks: LinkItem[]) => {
-    setLinks(newLinks);
-    localStorage.setItem("quick_links", JSON.stringify(newLinks));
-  };
-
-  const handleLinkClick = (id: string) => {
-    const updated = links.map((link) =>
-      link.id === id ? { ...link, clicks: link.clicks + 1 } : link
-    );
-    // Sort by clicks desc
-    updated.sort((a, b) => b.clicks - a.clicks);
-    saveLinks(updated);
-  };
-
-  const addNewLink = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTitle || !newUrl) return;
-
-    const newItem: LinkItem = {
-      id: Date.now().toString(),
-      title: newTitle,
-      url: newUrl.startsWith("http") ? newUrl : `https://${newUrl}`,
-      clicks: 0,
+      if (e.key === "ArrowRight") {
+        setSelectedIndex((prev) => {
+          if (prev === null) return 0;
+          return Math.min(prev + 1, links.length - 1);
+        });
+      } else if (e.key === "ArrowLeft") {
+        setSelectedIndex((prev) => {
+          if (prev === null) return 0;
+          return Math.max(prev - 1, 0);
+        });
+      } else if (e.key === "Enter" && selectedIndex !== null) {
+        const link = links[selectedIndex];
+        if (link) {
+          handleLinkClick(link.id);
+          window.location.href = link.url;
+        }
+      } else {
+        // Reset selection on other keys or clicks
+        // setSelectedIndex(null);
+      }
     };
 
-    const updated = [...links, newItem];
-    saveLinks(updated);
-    setNewTitle("");
-    setNewUrl("");
-    setIsAdding(false);
-  };
-
-  const deleteLink = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (confirm("Remove this link?")) {
-      const updated = links.filter((l) => l.id !== id);
-      saveLinks(updated);
-    }
-  };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [links, selectedIndex]);
 
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-2xl mx-auto mt-8 mb-8 z-10">
       <div className="flex flex-wrap justify-center gap-x-8 gap-y-3">
         <AnimatePresence mode="popLayout">
-          {links.map((link) => (
+          {links.map((link, index) => (
             <motion.div
               key={link.id}
               layout
@@ -91,8 +77,20 @@ export default function QuickLinks() {
               <a
                 href={link.url}
                 onClick={() => handleLinkClick(link.id)}
-                className="text-zinc-500 hover:text-zinc-200 transition-colors text-sm tracking-wider uppercase font-light flex items-center gap-2"
+                className={`transition-colors text-sm tracking-wider uppercase font-light flex items-center gap-2 ${
+                  selectedIndex === index
+                    ? "text-cyan-400 font-normal scale-110"
+                    : "text-zinc-500 hover:text-zinc-200"
+                }`}
               >
+                {selectedIndex === index && (
+                  <motion.span
+                    layoutId="cursor"
+                    className="absolute -left-3 text-cyan-500"
+                  >
+                    ›
+                  </motion.span>
+                )}
                 {link.title}
               </a>
               {/* Delete button (visible on hover) */}
