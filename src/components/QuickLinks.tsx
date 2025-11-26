@@ -33,11 +33,39 @@ export default function QuickLinks() {
     } else {
       setLinks(DEFAULT_LINKS);
     }
+
+    // Sync with cloud
+    fetch("/api/links")
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        throw new Error("Failed to sync");
+      })
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setLinks(data);
+          localStorage.setItem("quick_links", JSON.stringify(data));
+        }
+      })
+      .catch((err) => {
+        // Ignore auth errors or network errors, just use local
+        console.log("Sync skipped:", err);
+      });
   }, []);
 
   const saveLinks = (newLinks: LinkItem[]) => {
     setLinks(newLinks);
     localStorage.setItem("quick_links", JSON.stringify(newLinks));
+
+    // Save to cloud
+    fetch("/api/links", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newLinks),
+    }).catch((err) => console.error("Failed to save to cloud:", err));
   };
 
   const handleLinkClick = (id: string) => {
@@ -130,11 +158,10 @@ export default function QuickLinks() {
               <a
                 href={link.url}
                 onClick={() => handleLinkClick(link.id)}
-                className={`transition-colors text-sm tracking-wider uppercase font-light flex items-center gap-2 ${
-                  selectedIndex === index
+                className={`transition-colors text-sm tracking-wider uppercase font-light flex items-center gap-2 ${selectedIndex === index
                     ? "text-cyan-400 font-normal scale-110"
                     : "text-zinc-500 hover:text-zinc-200"
-                }`}
+                  }`}
               >
                 {selectedIndex === index && (
                   <motion.span
