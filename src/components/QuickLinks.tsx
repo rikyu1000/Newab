@@ -132,17 +132,26 @@ export default function QuickLinks() {
         }
       } else if (e.key === "Escape") {
         setSelectedIndex(null);
-      } else if (/^(Digit|Numpad)[1-9]$/.test(e.code)) {
-        // Number key navigation (1-9)
-        const num = parseInt(e.code.replace("Digit", "").replace("Numpad", ""));
-        const index = num - 1;
-        if (links[index]) {
-          handleLinkClick(links[index].id);
-          window.location.href = links[index].url;
-        }
       } else {
-        // Reset selection on other keys or clicks
-        // setSelectedIndex(null);
+        // Handle number keys (1-9) including full-width
+        const key = e.key;
+        let num = -1;
+
+        if (/^[1-9]$/.test(key)) {
+          num = parseInt(key);
+        } else if (/^[１-９]$/.test(key)) {
+          // Convert full-width to half-width
+          const fullWidth = "１２３４５６７８９";
+          num = fullWidth.indexOf(key) + 1;
+        }
+
+        if (num > 0) {
+          const index = num - 1;
+          if (links[index]) {
+            handleLinkClick(links[index].id);
+            window.location.href = links[index].url;
+          }
+        }
       }
     };
 
