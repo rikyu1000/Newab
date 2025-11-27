@@ -132,6 +132,13 @@ export default function QuickLinks() {
         }
       } else if (e.key === "Escape") {
         setSelectedIndex(null);
+      } else if (/^[1-9]$/.test(e.key)) {
+        // Number key navigation (1-9)
+        const index = parseInt(e.key) - 1;
+        if (links[index]) {
+          handleLinkClick(links[index].id);
+          window.location.href = links[index].url;
+        }
       } else {
         // Reset selection on other keys or clicks
         // setSelectedIndex(null);
@@ -158,10 +165,11 @@ export default function QuickLinks() {
               <a
                 href={link.url}
                 onClick={() => handleLinkClick(link.id)}
-                className={`transition-colors text-sm tracking-wider uppercase font-light flex items-center gap-2 ${selectedIndex === index
+                className={`transition-colors text-sm tracking-wider uppercase font-light flex items-center gap-2 ${
+                  selectedIndex === index
                     ? "text-cyan-400 font-normal scale-110"
                     : "text-zinc-500 hover:text-zinc-200"
-                  }`}
+                }`}
               >
                 {selectedIndex === index && (
                   <motion.span
