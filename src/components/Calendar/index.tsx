@@ -57,11 +57,17 @@ export default function Calendar() {
   }
 
   return (
-    <div className="w-full flex flex-col mt-auto">
+    <div className="w-full flex flex-col mt-auto relative group">
       <NextEvent events={events} />
       <div className="w-full h-32">
         <Timeline events={events} />
       </div>
+      <a
+        href="/api/auth/logout"
+        className="absolute -top-8 right-0 text-xs text-zinc-700 hover:text-zinc-400 transition-colors opacity-0 group-hover:opacity-100"
+      >
+        Disconnect
+      </a>
     </div>
   );
 }

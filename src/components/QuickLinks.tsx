@@ -132,9 +132,10 @@ export default function QuickLinks() {
         }
       } else if (e.key === "Escape") {
         setSelectedIndex(null);
-      } else if (/^[1-9]$/.test(e.key)) {
+      } else if (/^(Digit|Numpad)[1-9]$/.test(e.code)) {
         // Number key navigation (1-9)
-        const index = parseInt(e.key) - 1;
+        const num = parseInt(e.code.replace("Digit", "").replace("Numpad", ""));
+        const index = num - 1;
         if (links[index]) {
           handleLinkClick(links[index].id);
           window.location.href = links[index].url;
