@@ -8,10 +8,7 @@ export async function GET() {
 
   const url = oauth2Client.generateAuthUrl({
     access_type: "offline",
-    scope: [
-      "https://www.googleapis.com/auth/calendar.events.readonly",
-      "https://www.googleapis.com/auth/drive.file",
-    ],
+    scope: ["https://www.googleapis.com/auth/calendar.events.readonly"],
     prompt: "consent", // Force refresh token generation
   });
 
