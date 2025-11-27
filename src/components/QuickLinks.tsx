@@ -133,21 +133,25 @@ export default function QuickLinks() {
       } else if (e.key === "Escape") {
         setSelectedIndex(null);
       } else {
-        // Handle number keys (1-9) including full-width
-        const key = e.key;
+        // Handle number keys (1-9)
         let num = -1;
 
-        if (/^[1-9]$/.test(key)) {
-          num = parseInt(key);
-        } else if (/^[１-９]$/.test(key)) {
-          // Convert full-width to half-width
+        // 1. Check physical key code (works even with IME on)
+        if (/^(Digit|Numpad)[1-9]$/.test(e.code)) {
+          num = parseInt(e.code.replace("Digit", "").replace("Numpad", ""));
+        }
+        // 2. Fallback to key value (for full-width characters)
+        else if (/^[1-9]$/.test(e.key)) {
+          num = parseInt(e.key);
+        } else if (/^[１-９]$/.test(e.key)) {
           const fullWidth = "１２３４５６７８９";
-          num = fullWidth.indexOf(key) + 1;
+          num = fullWidth.indexOf(e.key) + 1;
         }
 
         if (num > 0) {
           const index = num - 1;
           if (links[index]) {
+            e.preventDefault(); // Prevent default action if link exists
             handleLinkClick(links[index].id);
             window.location.href = links[index].url;
           }
