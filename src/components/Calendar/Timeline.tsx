@@ -61,7 +61,7 @@ export default function Timeline({ events }: TimelineProps) {
       </div>
 
       {/* Events */}
-      <div className="absolute inset-0 top-4 bottom-8 overflow-hidden">
+      <div className="absolute inset-0 top-4 bottom-8">
         {events.map((event, index) => {
           if (!event.start.dateTime || !event.end.dateTime) return null; // Skip all-day events for now or handle differently
 
