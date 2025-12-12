@@ -98,7 +98,7 @@ export default function Timeline({ events }: TimelineProps) {
                 className={`${paddingX} py-1 h-full flex flex-col justify-center relative`}
               >
                 <span
-                  className={`${titleSize} text-zinc-200 font-medium truncate block`}
+                  className={`${titleSize} text-zinc-200 font-medium leading-tight line-clamp-2 whitespace-normal break-words block`}
                 >
                   {event.summary}
                 </span>
