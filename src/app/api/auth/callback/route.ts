@@ -12,9 +12,16 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "No code provided" }, { status: 400 });
   }
 
+  console.log("Auth Callback triggered. Code available.");
+
   try {
     const oauth2Client = getGoogleAuthClient();
     const { tokens } = await oauth2Client.getToken(code);
+
+    console.log(
+      "Tokens received. Refresh token present:",
+      !!tokens.refresh_token
+    );
 
     if (tokens.refresh_token) {
       console.log("Setting cookie with NODE_ENV:", process.env.NODE_ENV);

@@ -9,6 +9,11 @@ async function getDriveClient() {
   const cookieStore = cookies();
   const refreshToken = cookieStore.get("google_refresh_token")?.value;
 
+  console.log(
+    "API: getDriveClient called. Refresh token exists:",
+    !!refreshToken
+  );
+
   if (!refreshToken) {
     // Return null to indicate missing auth, handled by caller
     return null;
