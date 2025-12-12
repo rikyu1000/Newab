@@ -51,8 +51,15 @@ export async function GET() {
     });
 
     return NextResponse.json(fileRes.data);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to fetch links from Drive:", error);
+
+    // Check for auth errors from Google API
+    const status = error.code || error.status || 500;
+    if (status === 401 || error.message === "invalid_grant") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     return NextResponse.json(
       { error: "Failed to fetch links" },
       { status: 500 }
@@ -104,8 +111,14 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to save links to Drive:", error);
+
+    const status = error.code || error.status || 500;
+    if (status === 401 || error.message === "invalid_grant") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     return NextResponse.json(
       { error: "Failed to save links" },
       { status: 500 }

@@ -66,14 +66,7 @@ export default function QuickLinks() {
       })
       .catch((err) => {
         console.log("Sync skipped:", err);
-        // If it was unauthorized, we already set error.
-        // For network errors on initial load, maybe keep as local?
-        // But user wants to know if sync is working.
-        if (err.message !== "Unauthorized") {
-          // Optional: setSyncStatus("error") for network issues too?
-          // Let's keep it 'local' for transient network errors to avoid annoyance,
-          // unless it's definitely an auth error which we know needs action.
-        }
+        setSyncStatus("error");
       });
   }, []);
 
