@@ -117,24 +117,26 @@ export default function Timeline({ events }: TimelineProps) {
                 )}
 
                 {/* Tooltip */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[200px] bg-zinc-900/95 backdrop-blur-md border border-zinc-700 rounded-md p-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                  <div className="text-xs font-bold text-zinc-100 mb-0.5 whitespace-normal break-words text-center">
-                    {event.summary}
+                {isShort && (
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[200px] bg-zinc-900/95 backdrop-blur-md border border-zinc-700 rounded-md p-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                    <div className="text-xs font-bold text-zinc-100 mb-0.5 whitespace-normal break-words text-center">
+                      {event.summary}
+                    </div>
+                    <div className="text-[10px] text-zinc-400 font-mono text-center">
+                      {start.toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}{" "}
+                      -{" "}
+                      {end.toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                    {/* Arrow */}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-zinc-700" />
                   </div>
-                  <div className="text-[10px] text-zinc-400 font-mono text-center">
-                    {start.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}{" "}
-                    -{" "}
-                    {end.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </div>
-                  {/* Arrow */}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-zinc-700" />
-                </div>
+                )}
               </div>
             </motion.div>
           );
