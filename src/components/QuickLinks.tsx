@@ -202,19 +202,6 @@ export default function QuickLinks() {
             Sync Error
           </button>
         )}
-        {syncStatus === "synced" && (
-          <div
-            className="w-2 h-2 rounded-full bg-emerald-500/50"
-            title="Synced with cloud"
-          />
-        )}
-        {syncStatus === "local" && (
-          <button
-            onClick={() => (window.location.href = "/api/auth/login")}
-            className="w-2 h-2 rounded-full bg-zinc-700 hover:bg-zinc-500 transition-colors"
-            title="Local only. Click to connect."
-          />
-        )}
       </div>
       <div className="flex flex-wrap justify-center gap-x-8 gap-y-3">
         <AnimatePresence mode="popLayout">
