@@ -10,7 +10,8 @@ async function getDriveClient() {
   const refreshToken = cookieStore.get("google_refresh_token")?.value;
 
   if (!refreshToken) {
-    throw new Error("No refresh token found");
+    // Return null to indicate missing auth, handled by caller
+    return null;
   }
 
   const oauth2Client = getGoogleAuthClient();
@@ -22,6 +23,10 @@ async function getDriveClient() {
 export async function GET() {
   try {
     const drive = await getDriveClient();
+
+    if (!drive) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     // Search for the config file in App Data folder
     const listRes = await drive.files.list({
@@ -58,6 +63,11 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const drive = await getDriveClient();
+
+    if (!drive) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const links = await request.json();
     const content = JSON.stringify(links);
 

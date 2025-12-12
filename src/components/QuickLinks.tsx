@@ -25,6 +25,9 @@ export default function QuickLinks() {
   const [newTitle, setNewTitle] = useState("");
   const [newUrl, setNewUrl] = useState("");
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [syncStatus, setSyncStatus] = useState<"synced" | "local" | "error">(
+    "local"
+  );
 
   useEffect(() => {
     const saved = localStorage.getItem("quick_links");
@@ -37,6 +40,10 @@ export default function QuickLinks() {
     // Sync with cloud
     fetch("/api/links")
       .then((res) => {
+        if (res.status === 401) {
+          setSyncStatus("error");
+          throw new Error("Unauthorized");
+        }
         if (res.ok) {
           return res.json();
         }
@@ -46,11 +53,27 @@ export default function QuickLinks() {
         if (Array.isArray(data) && data.length > 0) {
           setLinks(data);
           localStorage.setItem("quick_links", JSON.stringify(data));
+          setSyncStatus("synced");
+        } else {
+          // If empty list returned from cloud, and we have local defaults, decide what to do.
+          // For now, trust cloud if it returns successfully (even empty array is valid sync)
+          // But usually we don't overwrite if local has default and cloud has nothing on first load?
+          // Let's stick to current logic: only if data > 0
+          if (Array.isArray(data)) {
+            setSyncStatus("synced");
+          }
         }
       })
       .catch((err) => {
-        // Ignore auth errors or network errors, just use local
         console.log("Sync skipped:", err);
+        // If it was unauthorized, we already set error.
+        // For network errors on initial load, maybe keep as local?
+        // But user wants to know if sync is working.
+        if (err.message !== "Unauthorized") {
+          // Optional: setSyncStatus("error") for network issues too?
+          // Let's keep it 'local' for transient network errors to avoid annoyance,
+          // unless it's definitely an auth error which we know needs action.
+        }
       });
   }, []);
 
@@ -65,7 +88,17 @@ export default function QuickLinks() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newLinks),
-    }).catch((err) => console.error("Failed to save to cloud:", err));
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          setSyncStatus("error");
+          throw new Error("Unauthorized");
+        }
+        if (res.ok) {
+          setSyncStatus("synced");
+        }
+      })
+      .catch((err) => console.error("Failed to save to cloud:", err));
   };
 
   const handleLinkClick = (id: string) => {
@@ -164,7 +197,33 @@ export default function QuickLinks() {
   }, [links, selectedIndex]);
 
   return (
-    <div className="flex flex-col items-center gap-4 w-full px-4 md:px-0 max-w-2xl mx-auto mt-8 mb-8 z-10">
+    <div className="relative flex flex-col items-center gap-4 w-full px-4 md:px-0 max-w-2xl mx-auto mt-8 mb-8 z-10">
+      {/* Sync Status Indicator */}
+      <div className="absolute -top-6 right-4 md:right-0">
+        {syncStatus === "error" && (
+          <button
+            onClick={() => (window.location.href = "/api/auth/login")}
+            className="flex items-center gap-1 text-xs text-red-400 hover:text-red-300 transition-colors"
+            title="Sync failed. Click to re-connect."
+          >
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            Sync Error
+          </button>
+        )}
+        {syncStatus === "synced" && (
+          <div
+            className="w-2 h-2 rounded-full bg-emerald-500/50"
+            title="Synced with cloud"
+          />
+        )}
+        {syncStatus === "local" && (
+          <button
+            onClick={() => (window.location.href = "/api/auth/login")}
+            className="w-2 h-2 rounded-full bg-zinc-700 hover:bg-zinc-500 transition-colors"
+            title="Local only. Click to connect."
+          />
+        )}
+      </div>
       <div className="flex flex-wrap justify-center gap-x-8 gap-y-3">
         <AnimatePresence mode="popLayout">
           {links.map((link, index) => (
