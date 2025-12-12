@@ -80,14 +80,14 @@ export default function Timeline({ events }: TimelineProps) {
               initial={{ opacity: 0, scaleY: 0 }}
               animate={{ opacity: isPast ? 0.4 : 1, scaleY: 1 }}
               transition={{ delay: index * 0.05 }}
-              className={`absolute top-0 bottom-0 rounded-lg border border-zinc-700/50 bg-zinc-800/80 backdrop-blur-sm overflow-hidden group hover:z-20 hover:border-zinc-500 transition-colors cursor-default`}
+              className={`absolute top-0 bottom-0 rounded-lg border border-zinc-700/50 bg-zinc-800/80 backdrop-blur-sm group hover:z-20 hover:border-zinc-500 transition-colors cursor-default`}
               style={{
                 left: `${startPercent}%`,
                 width: `${widthPercent}%`,
                 minWidth: "4px",
               }}
             >
-              <div className="px-2 py-1 h-full flex flex-col justify-center">
+              <div className="px-2 py-1 h-full flex flex-col justify-center relative">
                 <span className="text-xs text-zinc-200 font-medium truncate block">
                   {event.summary}
                 </span>
@@ -102,6 +102,26 @@ export default function Timeline({ events }: TimelineProps) {
                     minute: "2-digit",
                   })}
                 </span>
+
+                {/* Tooltip */}
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[200px] bg-zinc-900/95 backdrop-blur-md border border-zinc-700 rounded-md p-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                  <div className="text-xs font-bold text-zinc-100 mb-0.5 whitespace-normal break-words text-center">
+                    {event.summary}
+                  </div>
+                  <div className="text-[10px] text-zinc-400 font-mono text-center">
+                    {start.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}{" "}
+                    -{" "}
+                    {end.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </div>
+                  {/* Arrow */}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-zinc-700" />
+                </div>
               </div>
             </motion.div>
           );
